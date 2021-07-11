@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import socketio from 'socket.io-client'
 
 const Draw = () => {
 
@@ -54,7 +55,7 @@ const Draw = () => {
     };
 
     return (
-        <div className="style">
+        <div>
             <button onClick={clearCanvas}>Clear Canvas</button>
             <canvas
                 id="canvas"
