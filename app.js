@@ -3,6 +3,7 @@ const cors = require("cors");
 const path = require("path");
 
 const userRouter = require("./routes/userRouter");
+const boardRouter = require("./routes/boardRouter");
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 
@@ -21,6 +22,7 @@ if (process.env.NODE_ENV === "production") {
 
 //ROUTES
 app.use("/api/auth", userRouter);
+app.use("/api/board", boardRouter);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
