@@ -11,5 +11,9 @@ module.exports.setupSocket = (server) => {
 
     io.on("connection", (socket) => {
         io.emit("connected")
+        socket.on('canvas-data', (data) => {
+            socket.broadcast.emit('canvas-data', data);
+            console.log("image sent")
+        });
     });
 };

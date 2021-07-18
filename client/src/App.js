@@ -1,9 +1,9 @@
-import Draw from './components/canvas/Draw'
+import Board from './components/canvas/Board'
 
 const App = () => {
   return (
     <div className="App">
-      <Draw />
+      <Board />
     </div>
   );
 }
