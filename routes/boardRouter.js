@@ -5,6 +5,9 @@ const router = express.Router();
 
 router.post("/", boardController.createBoard);
 
+// this is for development puropse only
+router.get("/", boardController.getAllBoard);
+
 router
   .route("/:id")
   .get(boardController.getBoard)

@@ -1,11 +1,11 @@
-import Board from './components/canvas/Board'
+import Profile from "./components/Profile";
 
 const App = () => {
   return (
     <div className="App">
-      <Board />
+      <Profile />
     </div>
   );
-}
+};
 
 export default App;

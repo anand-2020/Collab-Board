@@ -1,6 +1,25 @@
 const Board = require("./../models/boardModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
+const jwt = require("jsonwebtoken");
+
+const signToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+};
+
+// this is for development puropse only
+exports.getAllBoard = catchAsync(async (req, res, next) => {
+  const boards = await Board.find();
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      boards,
+    },
+  });
+});
 
 exports.getBoard = catchAsync(async (req, res, next) => {
   const board = await Board.findById(req.params.id);
@@ -8,9 +27,12 @@ exports.getBoard = catchAsync(async (req, res, next) => {
     return next(new AppError(`No board found with ID ${req.params.id}`, 404));
   }
 
+  const token = signToken(board._id);
+
   res.status(200).json({
     status: "success",
     data: {
+      jwt: token,
       board,
     },
   });
