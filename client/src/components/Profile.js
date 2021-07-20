@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Board from "./canvas/Board";
+import BoardCardGrid from './UI/BoardCardGrid'
+import BoardCard from './UI/BoardCard'
 
 const Profile = () => {
   const [boards, setBoards] = useState([]);
@@ -30,7 +32,7 @@ const Profile = () => {
 
   return (
     <div>
-      <h1>Select Board</h1>
+      {/* <h1>Select Board</h1>
       {boards.map((board, index) => (
         <button
           key={index}
@@ -41,7 +43,16 @@ const Profile = () => {
           Board {index}
         </button>
       ))}
-      {currBoard ? <Board board={currBoard} /> : null}
+      {currBoard ? <Board board={currBoard} /> : null} */}
+      <BoardCardGrid>
+        <BoardCard />
+        <BoardCard />
+        <BoardCard />
+        <BoardCard />
+        <BoardCard />
+        <BoardCard />
+        <BoardCard />
+      </BoardCardGrid>
     </div>
   );
 };
