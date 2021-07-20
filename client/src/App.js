@@ -1,9 +1,13 @@
+import { Socket } from "socket.io";
 import Profile from "./components/Profile";
+import { socket, SocketContext } from './store/socket-context'
 
 const App = () => {
   return (
     <div className="App">
-      <Profile />
+      <SocketContext.Provider value={socket}>
+        <Profile />
+      </SocketContext.Provider>
     </div>
   );
 };

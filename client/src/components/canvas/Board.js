@@ -1,10 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { io } from "socket.io-client";
+import { SocketContext } from "../../store/socket-context";
 
 const Board = (props) => {
   const canvasRef = useRef(null);
   const contextRef = useRef({});
-  var socket;
+  // var socket;
+  // const socketRef = useRef()
+  const socket = useContext(SocketContext);
   var color, isDrawing, currPath;
 
   const prepareCanvas = () => {
@@ -30,10 +33,12 @@ const Board = (props) => {
   };
 
   useEffect(() => {
-    console.log("Attempting socket connection");
-    socket = io("http://localhost:5000/", {
-      query: { token: props.board.jwt },
-    });
+    // console.log("Attempting socket connection");
+    // const socket = io("http://localhost:5000/", {
+    //   query: { token: props.board.jwt },
+    // });
+    // socketRef.current = socket;
+    socket.emit("join-room", props.board.jwt)
 
     prepareCanvas();
   }, [props.board]);
@@ -51,7 +56,15 @@ const Board = (props) => {
       contextRef.current.stroke();
       contextRef.current.strokeStyle = color;
     });
-  });
+  }, [props.board]);
+
+  useEffect(() => {
+    return () => {
+      socket.emit("leave-room", props.board.jwt)
+
+    }
+  }, [props.board])
+
 
   const startDrawing = ({ nativeEvent }) => {
     const { offsetX, offsetY } = nativeEvent;
@@ -64,7 +77,7 @@ const Board = (props) => {
 
   const finishDrawing = () => {
     isDrawing = false;
-    socket.emit("update-canvas", { newPath: currPath });
+    socket.emit("update-canvas", { newPath: currPath, token: props.board.jwt });
     currPath = [];
   };
 
