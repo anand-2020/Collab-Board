@@ -22,6 +22,17 @@ const validationErrorDB = (err) => {
   return new AppError(message, 400);
 };
 
+const castErrorDB = (err) => {
+  const message = `Invalid ${err.path}: ${err.value}.`;
+  return new AppError(message, 400);
+};
+
+const handleJWTError = () =>
+  new AppError("Invalid token. Please login again", 401);
+
+const handleExpiredToken = () =>
+  new AppError("Token expired. Login in again", 401);
+
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -60,6 +71,9 @@ module.exports = (err, req, res, next) => {
     if (error.name === "MongoError" && error.code === 11000)
       error = duplicateFieldsDB(error);
     else if (error.name === "ValidationError") error = validationErrorDB(error);
+    else if (error.name === "CastError") error = castErrorDB(error);
+    else if (error.name === "JsonWebTokenError") error = handleJWTError();
+    else if (error.name === "TokenExpiredError") error = handleExpiredToken();
 
     sendErrorProd(error, res);
   }

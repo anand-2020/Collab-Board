@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const util = require("util");
 
 const User = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
@@ -47,4 +48,33 @@ exports.login = catchAsync(async (req, res, next) => {
       user: user,
     },
   });
+});
+
+exports.protect = catchAsync(async (req, res, next) => {
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) {
+    return next(
+      new AppError("Access Denied!! Please log in to get access", 401)
+    );
+  }
+
+  const decoded = await util.promisify(jwt.verify)(
+    token,
+    process.env.JWT_SECRET
+  );
+
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
+    return next(new AppError("No user found with this ID", 401));
+  }
+
+  req.user = currentUser;
+  next();
 });
