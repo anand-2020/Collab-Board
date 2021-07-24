@@ -1,4 +1,5 @@
 import { useState, useContext } from "react";
+import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { LoginForm } from "./LoginForm";
 import { motion } from "framer-motion";
@@ -166,7 +167,7 @@ const Auth = (props) => {
             </InnerContainer>
           </BoxContainer>
         ) : (
-          <p>You are logged in</p>
+          <Redirect to="/user/profile" />
         )}
       </AccountContext.Provider>
     </AuthContainer>

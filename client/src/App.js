@@ -12,19 +12,19 @@ const App = () => {
 
   const checkAuthentication = () => {
     axios
-      .get(
-        "http://localhost:5000/user/isLoggedIn" //pass jwt token
-      )
+      .get("http://localhost:5000/api/auth/isLoggedIn", {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+      })
       .then((res) => {
-        if (res.data.data.isAuthenticated) {
-          setAuthenticated(true);
-          setCurrentUser(res.data.data.user);
+        setAuthenticated(true);
+        setCurrentUser(res.data.data.user);
 
-          const connection = socketio.connect("http://localhost:5000/", {
-            // query: { token: "sendjwthere" },
-          });
-          setSocket(connection);
-        }
+        const connection = socketio.connect("http://localhost:5000/", {
+          query: { token: localStorage.getItem("jwt") },
+        });
+        setSocket(connection);
       })
       .catch((err) => {
         console.log(err);
@@ -35,9 +35,10 @@ const App = () => {
     checkAuthentication();
   }, []);
 
-  const updateAuthData = (isAuthenticated, user) => {
+  const updateAuthData = (isAuthenticated, user, socketConnection) => {
     setAuthenticated(isAuthenticated);
     setCurrentUser(user);
+    setSocket(socketConnection);
   };
 
   return (

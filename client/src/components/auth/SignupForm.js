@@ -1,4 +1,6 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import axios from "axios";
+import socketio from "socket.io-client";
 import {
   BoldLink,
   BoxContainer,
@@ -9,27 +11,75 @@ import {
 } from "./../../helper/styledElements";
 import { Marginer } from "./../../helper/marginer";
 import { AccountContext } from "./accountContext";
+import AuthContext from "../../context/auth-context";
 
 export function SignupForm(props) {
   const { switchToSignin } = useContext(AccountContext);
+  const { updateAuthData } = useContext(AuthContext);
+  const [handle, setHandle] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState(null);
+
+  const signupHandler = () => {
+    axios
+      .post(`http://localhost:5000/api/auth/signup`, {
+        handle,
+        email,
+        password,
+      })
+      .then((res) => {
+        // change it to httpOnly cookie
+        localStorage.setItem("jwt", res.data.jwt);
+        const connection = socketio.connect("http://localhost:5000/", {
+          query: { token: localStorage.getItem("jwt") },
+        });
+
+        updateAuthData(true, res.data.data.user, connection);
+      })
+      .catch((err) => {
+        window.alert(err.response.data.message);
+        updateAuthData(false, null, null);
+      });
+  };
 
   return (
     <BoxContainer>
       <FormContainer>
-        <Label>User Name</Label>
-        <Input type="text" />
+        <Label>Handle</Label>
+        <Input
+          type="text"
+          onChange={(e) => {
+            setHandle(e.target.value);
+          }}
+        />
         <Marginer direction="vertical" margin={10} />
         <Label>Email</Label>
-        <Input type="email" />
+        <Input
+          type="email"
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
+        />
         <Marginer direction="vertical" margin={10} />
         <Label>Password</Label>
-        <Input type="password" />
+        <Input
+          type="password"
+          onChange={(e) => {
+            setPassword(e.target.value);
+          }}
+        />
         <Marginer direction="vertical" margin={10} />
         <Label>Confirm Password</Label>
-        <Input type="password" />
+        <Input
+          type="password"
+          onChange={(e) => {
+            setConfirmPassword(e.target.value);
+          }}
+        />
       </FormContainer>
       <Marginer direction="vertical" margin={20} />
-      <SubmitButton type="submit">Signup</SubmitButton>
+      <SubmitButton onClick={signupHandler}>Signup</SubmitButton>
       <Marginer direction="vertical" margin="1em" />
       <Label>
         Already have an account?

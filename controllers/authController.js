@@ -78,3 +78,10 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+exports.loggedInStatus = (req, res) => {
+  res.status(200).json({
+    status: "success",
+    data: { user: req.user },
+  });
+};
