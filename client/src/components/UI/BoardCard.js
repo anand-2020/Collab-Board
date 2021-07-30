@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function MediaControlCard() {
+export default function BoardCard(props) {
     const classes = useStyles();
     const theme = useTheme();
 
@@ -51,7 +51,7 @@ export default function MediaControlCard() {
                         </Typography>
                     </CardContent>
                     <div className={classes.controls}>
-                        <IconButton aria-label="edit">
+                        <IconButton aria-label="edit" onClick={props.edit}>
                             <BorderColor />
                         </IconButton>
                         <IconButton aria-label="share">

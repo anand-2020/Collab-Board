@@ -2,6 +2,27 @@ const socketio = require("socket.io");
 const jwt = require("jsonwebtoken");
 const Board = require("./models/boardModel");
 
+const roomAuth = async (userID, boardID) => {
+  try {
+    const board = await Board.findById(boardID).select("owner collaborators");
+
+    let found = false;
+    if (board.owner === userID) found = true;
+    else {
+      for (var i = 0; i < board.collaborators.length; i++) {
+        if (board.collaborators[i] === userID) {
+          found = true;
+          break;
+        }
+      }
+    }
+    if (found) return true;
+    else return false;
+  } catch (err) {
+    return false;
+  }
+};
+
 module.exports.setupSocket = (server) => {
   const io = socketio(server, {
     cors: {
@@ -11,110 +32,63 @@ module.exports.setupSocket = (server) => {
     },
   });
 
-  io.on("connection", async socket => {
+  io.use((socket, next) => {
+    try {
+      socket.decoded = jwt.verify(
+        socket.handshake.query.token,
+        process.env.JWT_SECRET
+      );
+      next();
+    } catch (err) {
+      console.log("Could not authorize for this board");
+      next(new Error("Could not authorize for this board"));
+    }
+  }).on("connection", async (socket) => {
+    const userID = socket.decoded.id;
+    console.log("socket connected");
+    io.emit("connected");
 
-    console.log("socket connected")
-    io.emit('connected')
+    let roomID = null;
 
-    socket.on("join-room", token => {
+    socket.on("disconnect", () => console.log("socket disconnected"));
 
+    socket.on("join-room", async (boardID) => {
       try {
-        console.log("joining room")
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        socket.join(decoded.id)
-        io.emit('room-joined')
+        console.log("joining room...");
+        const canJoin = await roomAuth(userID, boardID);
 
+        if (canJoin) {
+          roomID = boardID;
+          socket.join(roomID);
+          io.emit("room-joined");
+        } else {
+          console.log("unauthorized");
+          io.emit("auth-error");
+        }
       } catch (err) {
-
-        console.log('unauthorized')
-        io.emit('auth-error')
-
-      }
-
-    })
-
-    socket.on('disconnect', () => console.log("socket disconnected"))
-
-    socket.on("leave-room", token => {
-      try {
-        //console.log("Authorizing socket....");
-        const decoded = jwt.verify(
-
-          token, // socket.handshake.query.token,
-          process.env.JWT_SECRET
-        );
-
-        console.log("Leaving room")
-        socket.leave(decoded.id)
-
-      } catch (err) {
-        console.log("Could not leave");
-        // next(new Error("Could not authorize for this board"));
-      }
-    })
-
-    socket.on("update-canvas", (data) => {
-      try {
-        //console.log("Authorizing socket....");
-        const decoded = jwt.verify(
-
-          data.token, // socket.handshake.query.token,
-          process.env.JWT_SECRET
-        );
-
-        socket.broadcast.to(decoded.id).emit("update-canvas", data);
-
-      } catch (err) {
-        console.log("Could not update");
-        // next(new Error("Could not authorize for this board"));
+        console.log("unauthorized");
+        io.emit("auth-error");
       }
     });
 
-  })
+    socket.on("leave-room", async (boardID) => {
+      try {
+        const canLeave = await roomAuth(userID, boardID);
 
-  // io.use((socket, next) => {
-  //   try {
-  //     console.log("Authorizing socket....");
-  //     socket.decoded = jwt.verify(
-  //       socket.handshake.query.token,
-  //       process.env.JWT_SECRET
-  //     );
-  //     next();
-  //   } catch (err) {
-  //     console.log("Could not authorize for this board");
-  //     next(new Error("Could not authorize for this board"));
-  //   }
-  // }).on("connection", async (socket) => {
-  //   const board = await Board.findById(socket.decoded.id);
-  //   if (!board)
-  //     return io.emit("error", {
-  //       msg: "Oops.. An unexpected error occured. Try reloading",
-  //     });
+        if (canLeave) {
+          socket.leave(roomID);
+          roomID = null;
+          console.log("Leaving room");
+        } else {
+          console.log("Could not leave");
+        }
+      } catch (err) {
+        console.log("Could not leave");
+      }
+    });
 
-  //   const roomID = socket.decoded.id;
-  //   socket.join(roomID);
-  //   socket.on('disconnect', () => console.log("socket disconnected"))
-  //   socket.on("leave-room", roomID => {
-  //     try {
-  //       console.log("Authorizing socket....");
-  //       const decoded = jwt.verify(
-  //         socket.handshake.query.token,
-  //         process.env.JWT_SECRET
-  //       );
-
-  //       console.log("Leaving room")
-  //       socket.leave(decoded.id)
-
-  //     } catch (err) {
-  //       console.log("Could not authorize for this board");
-  //       next(new Error("Could not authorize for this board"));
-  //     }
-  //   })
-  //   io.emit("connected");
-  //   console.log("Socket connection established");
-
-  //   socket.on("update-canvas", (data) => {
-  //     socket.broadcast.to(roomID).emit("update-canvas", data);
-  //   });
-  // });
-};
+    socket.on("update-canvas", async (data) => {
+      socket.broadcast.to(roomID).emit("update-canvas", data);
+    });
+  });
+}

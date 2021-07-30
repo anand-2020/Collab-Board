@@ -75,6 +75,7 @@ const Navbar = () => {
           <Fab color="secondary" aria-label="add" className={classes.fabButton}>
             <AddIcon />
           </Fab>
+
           <div className={classes.grow} />
           <div>
             <IconButton

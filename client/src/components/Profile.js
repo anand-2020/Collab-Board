@@ -33,27 +33,19 @@ const Profile = () => {
 
   return (
     <div>
-      {/* <h1>Select Board</h1>
-      {boards.map((board, index) => (
-        <button
-          key={index}
-          onClick={() => {
-            changeCurrBoard(board._id);
-          }}
-        >
-          Board {index}
-        </button>
-      ))}
-      {currBoard ? <Board board={currBoard} /> : null} */}
+
       <Navbar />
+      {currBoard ? <Board board={currBoard} /> : null}
       <BoardCardGrid>
-        <BoardCard />
-        <BoardCard />
-        <BoardCard />
-        <BoardCard />
-        <BoardCard />
-        <BoardCard />
-        <BoardCard />
+        {boards.map((board, index) => (
+          <BoardCard
+            key={index}
+            edit={() => {
+              changeCurrBoard(board._id);
+            }}
+          />
+
+        ))}
       </BoardCardGrid>
     </div>
   );
