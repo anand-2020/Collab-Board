@@ -9,8 +9,13 @@ const App = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [socket, setSocket] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const checkAuthentication = () => {
+    if (!localStorage.getItem("jwt")) {
+      setLoading(false);
+      return;
+    }
     axios
       .get("http://localhost:5000/api/auth/isLoggedIn", {
         headers: {
@@ -20,6 +25,7 @@ const App = () => {
       .then((res) => {
         setAuthenticated(true);
         setCurrentUser(res.data.data.user);
+        setLoading(false);
 
         const connection = socketio.connect("http://localhost:5000/", {
           query: { token: localStorage.getItem("jwt") },
@@ -27,6 +33,7 @@ const App = () => {
         setSocket(connection);
       })
       .catch((err) => {
+        setLoading(false);
         console.log(err);
       });
   };
@@ -50,7 +57,7 @@ const App = () => {
       }}
     >
       <SocketContext.Provider value={{ socket: socket }}>
-        <Home />
+        {!loading ? <Home /> : null}
       </SocketContext.Provider>
     </AuthContext.Provider>
   );

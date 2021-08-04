@@ -6,14 +6,19 @@ import { motion } from "framer-motion";
 import { AccountContext } from "./accountContext";
 import { SignupForm } from "./SignupForm";
 import AuthContext from "../../context/auth-context";
+import appMotoImage from "../../assets/appMoto.PNG";
 
 const AuthContainer = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 850px) {
+    flex-direction: column;
+  }
 `;
 
 const BoxContainer = styled.div`
@@ -71,7 +76,7 @@ const HeaderText = styled.h2`
 const SmallText = styled.h5`
   color: #fff;
   font-weight: 500;
-  font-size: 11px;
+  font-size: 14px;
   z-index: 10;
   margin: 0;
   margin-top: 7px;
@@ -105,6 +110,35 @@ const expandingTransition = {
   stiffness: 30,
 };
 
+const ImageConatiner = styled.div`
+  align-items: center;
+  justify-content: center;
+  @media (max-width: 850px) {
+    display: none;
+  }
+`;
+
+const ImageText = styled.h1`
+  font-size: 55px;
+  padding-top: 5px;
+  padding-left: 10px;
+  font-weight: 800;
+  color: teal;
+`;
+
+const AppHeaderText = styled.h1`
+  font-size: 35px;
+  font-weight: 700;
+  color: black;
+  z-index: 10;
+  margin: 0;
+  display: none;
+
+  @media (max-width: 850px) {
+    display: block;
+  }
+`;
+
 const Auth = (props) => {
   const { authenticated } = useContext(AuthContext);
 
@@ -137,6 +171,10 @@ const Auth = (props) => {
   return (
     <AuthContainer>
       <AccountContext.Provider value={contextValue}>
+        <ImageConatiner>
+          <ImageText>Collab-Board</ImageText>
+          <img width="540px" height="330px" src={appMotoImage} />
+        </ImageConatiner>
         {!authenticated ? (
           <BoxContainer>
             <TopContainer>
@@ -148,6 +186,7 @@ const Auth = (props) => {
               />
               {active === "signin" && (
                 <HeaderContainer>
+                  {/* <AppHeaderText>Collab-Board</AppHeaderText> */}
                   <HeaderText>Welcome</HeaderText>
                   <HeaderText>Back</HeaderText>
                   <SmallText>Please sign-in to continue!</SmallText>
@@ -155,6 +194,7 @@ const Auth = (props) => {
               )}
               {active === "signup" && (
                 <HeaderContainer>
+                  {/* <AppHeaderText>Collab-Board</AppHeaderText> */}
                   <HeaderText>Create</HeaderText>
                   <HeaderText>Account</HeaderText>
                   <SmallText>Please sign-up to continue!</SmallText>

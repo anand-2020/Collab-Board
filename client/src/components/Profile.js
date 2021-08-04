@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { Redirect } from "react-router-dom";
 import axios from "axios";
 import Board from "./canvas/Board";
 import BoardCardGrid from "./UI/BoardCardGrid";
 import BoardCard from "./UI/BoardCard";
 import Navbar from "./UI/Navbar";
+import AuthContext from "../context/auth-context";
 
 const Profile = () => {
   const [boards, setBoards] = useState([]);
   const [currBoard, setCurrBoard] = useState(null);
+  const { authenticated } = useContext(AuthContext);
 
   useEffect(() => {
     axios
@@ -33,20 +36,24 @@ const Profile = () => {
 
   return (
     <div>
-
-      <Navbar />
-      {currBoard ? <Board board={currBoard} /> : null}
-      <BoardCardGrid>
-        {boards.map((board, index) => (
-          <BoardCard
-            key={index}
-            edit={() => {
-              changeCurrBoard(board._id);
-            }}
-          />
-
-        ))}
-      </BoardCardGrid>
+      {authenticated ? (
+        <div>
+          <Navbar />
+          {currBoard ? <Board board={currBoard} /> : null}
+          <BoardCardGrid>
+            {boards.map((board, index) => (
+              <BoardCard
+                key={index}
+                edit={() => {
+                  changeCurrBoard(board._id);
+                }}
+              />
+            ))}
+          </BoardCardGrid>
+        </div>
+      ) : (
+        <Redirect to="/auth" />
+      )}
     </div>
   );
 };

@@ -37,6 +37,9 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  appBar: {
+    backgroundColor: "#009192",
+  },
 }));
 
 const Navbar = () => {
@@ -64,7 +67,7 @@ const Navbar = () => {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="fixed" color="primary">
+      <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           {/* <IconButton edge="start" color="inherit" aria-label="open drawer">
                     <MenuIcon />
