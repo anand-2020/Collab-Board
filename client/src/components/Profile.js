@@ -1,53 +1,56 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Board from "./canvas/Board";
 import BoardCardGrid from "./UI/BoardCardGrid";
 import BoardCard from "./UI/BoardCard";
 import Navbar from "./UI/Navbar";
-import { Redirect } from 'react-router-dom'
+import { CircularProgress } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core/styles';
+
+
+const useStyles = makeStyles((theme) => ({
+  loader: {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: 'translate(-50 %, -50 %)',
+    transform: '-webkit - translate(-50 %, -50 %)',
+    transform: '-moz - translate(-50 %, -50 %)',
+    transform: '-ms - translate(-50 %, -50 %)',
+  },
+}));
 
 const Profile = () => {
   const [boards, setBoards] = useState([]);
-  const [currBoard, setCurrBoard] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const classes = useStyles();
 
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/board/")
       .then((res) => {
         setBoards(res.data.data.boards);
+        setLoading(false)
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
-  // const changeCurrBoard = (id) => {
-  //   axios
-  //     .get(`http://localhost:5000/api/board/${id}`)
-  //     .then((res) => {
-  //       setCurrBoard(res.data.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
 
   return (
     <div>
 
       <Navbar />
-      {/* {currBoard ? <Board board={currBoard} /> : null} */}
-      <BoardCardGrid>
-        {boards.map((board, index) => (
-          <BoardCard
-            key={index}
-            boardId={board._id}
-          // changeCurrBoard(board._id);
+      {(!loading) ? (
+        <BoardCardGrid>
+          {boards.map((board, index) => (
+            <BoardCard
+              key={index}
+              boardId={board._id}
+            />
 
-          />
-
-        ))}
-      </BoardCardGrid>
+          ))}
+        </BoardCardGrid>) : (<CircularProgress className={classes.loader}></CircularProgress>)}
     </div>
   );
 };
