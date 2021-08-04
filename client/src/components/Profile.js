@@ -6,6 +6,7 @@ import BoardCardGrid from "./UI/BoardCardGrid";
 import BoardCard from "./UI/BoardCard";
 import Navbar from "./UI/Navbar";
 import AuthContext from "../context/auth-context";
+import { Redirect } from "react-router-dom";
 
 const Profile = () => {
   const [boards, setBoards] = useState([]);
@@ -23,30 +24,29 @@ const Profile = () => {
       });
   }, []);
 
-  const changeCurrBoard = (id) => {
-    axios
-      .get(`http://localhost:5000/api/board/${id}`)
-      .then((res) => {
-        setCurrBoard(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  // const changeCurrBoard = (id) => {
+  //   axios
+  //     .get(`http://localhost:5000/api/board/${id}`)
+  //     .then((res) => {
+  //       setCurrBoard(res.data.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
   return (
     <div>
       {authenticated ? (
         <div>
           <Navbar />
-          {currBoard ? <Board board={currBoard} /> : null}
+          {/* {currBoard ? <Board board={currBoard} /> : null} */}
           <BoardCardGrid>
             {boards.map((board, index) => (
               <BoardCard
                 key={index}
-                edit={() => {
-                  changeCurrBoard(board._id);
-                }}
+                boardId={board._id}
+                // changeCurrBoard(board._id);
               />
             ))}
           </BoardCardGrid>

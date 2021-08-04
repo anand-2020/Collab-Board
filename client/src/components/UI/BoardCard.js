@@ -7,6 +7,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import BorderColor from "@material-ui/icons/BorderColor";
 import Share from "@material-ui/icons/Share";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,9 +52,18 @@ export default function BoardCard(props) {
             </Typography>
           </CardContent>
           <div className={classes.controls}>
-            <IconButton aria-label="edit" onClick={props.edit}>
-              <BorderColor />
-            </IconButton>
+            <Link
+              to={{
+                pathname: "/user/board",
+                state: {
+                  boardId: props.boardId,
+                },
+              }}
+            >
+              <IconButton aria-label="edit">
+                <BorderColor />
+              </IconButton>
+            </Link>
             <IconButton aria-label="share">
               <Share />
             </IconButton>
