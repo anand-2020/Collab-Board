@@ -6,7 +6,6 @@ import BoardCardGrid from "./UI/BoardCardGrid";
 import BoardCard from "./UI/BoardCard";
 import Navbar from "./UI/Navbar";
 import AuthContext from "../context/auth-context";
-import { Redirect } from "react-router-dom";
 
 const Profile = () => {
   const [boards, setBoards] = useState([]);
@@ -39,7 +38,7 @@ const Profile = () => {
     <div>
       {authenticated ? (
         <div>
-          <Navbar />
+          <Navbar create={true} />
           {/* {currBoard ? <Board board={currBoard} /> : null} */}
           <BoardCardGrid>
             {boards.map((board, index) => (

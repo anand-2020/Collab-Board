@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Navbar = () => {
+const Navbar = (props) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -75,9 +75,15 @@ const Navbar = () => {
           <Typography variant="h6" className={clsx("title", classes.title)}>
             CollaBoard{" "}
           </Typography>
-          <Fab color="secondary" aria-label="add" className={classes.fabButton}>
-            <AddIcon />
-          </Fab>
+          {props.create ? (
+            <Fab
+              color="secondary"
+              aria-label="add"
+              className={classes.fabButton}
+            >
+              <AddIcon />
+            </Fab>
+          ) : null}
 
           <div className={classes.grow} />
           <div>
