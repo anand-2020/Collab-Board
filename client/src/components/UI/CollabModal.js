@@ -75,6 +75,9 @@ const CollabModal = (props) => {
                         fullWidth
                         onKeyUp={event => event.key === "Enter" ? addEmail(event) : null}
                     />
+                    <DialogContentText>
+                        Add a valid email and press ENTER
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
