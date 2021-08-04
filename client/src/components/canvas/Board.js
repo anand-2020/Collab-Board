@@ -35,33 +35,33 @@ const Board = (props) => {
   };
 
   useEffect(() => {
-    // socket.emit("join-room", props.board._id)
+    socket.emit("join-room", props.board._id)
 
     prepareCanvas();
   }, []);
 
-  // useEffect(() => {
-  //   if (!socket) return;
-  //   socket.on("update-canvas", (data) => {
-  //     const newPath = data.newPath;
-  //     contextRef.current.beginPath();
-  //     contextRef.current.moveTo(newPath[0].x, newPath[0].y);
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("update-canvas", (data) => {
+      const newPath = data.newPath;
+      contextRef.current.beginPath();
+      contextRef.current.moveTo(newPath[0].x, newPath[0].y);
 
-  //     for (var i = 1; i < newPath.length; i++) {
-  //       contextRef.current.lineTo(newPath[i].x, newPath[i].y);
-  //     }
-  //     contextRef.current.stroke();
-  //     contextRef.current.strokeStyle = props.color;
-  //   });
-  // }, []);
+      for (var i = 1; i < newPath.length; i++) {
+        contextRef.current.lineTo(newPath[i].x, newPath[i].y);
+      }
+      contextRef.current.stroke();
+      contextRef.current.strokeStyle = props.color;
+    });
+  }, []);
 
 
-  // useEffect(() => {
-  //   return () => {
-  //     socket.emit("leave-room", props.board._id)
+  useEffect(() => {
+    return () => {
+      socket.emit("leave-room", props.board._id)
 
-  //   }
-  // }, [])
+    }
+  }, [])
 
 
   const startDrawing = ({ nativeEvent }) => {
@@ -75,7 +75,7 @@ const Board = (props) => {
 
   const finishDrawing = () => {
     isDrawing = false;
-    // socket.emit("update-canvas", { newPath: currPath });
+    socket.emit("update-canvas", { newPath: currPath });
     currPath = [];
   };
 
