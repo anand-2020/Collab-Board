@@ -14,6 +14,7 @@ import { Toolbar } from '@material-ui/core';
 import Pencil from '@material-ui/icons/Edit'
 import ColorFill from '@material-ui/icons/FormatColorFill'
 import Undo from '@material-ui/icons/Undo'
+import Delete from '@material-ui/icons/Delete'
 
 const drawerWidth = 240;
 
@@ -100,6 +101,15 @@ const SideBar = (props) => {
 
                         </ListItemIcon>
                         <ListItemText primary={"Undo"} />
+                    </ListItem>
+                    <ListItem key={"clear"}>
+                        <ListItemIcon>
+                            <IconButton>
+                                <Delete color="secondary" onClick={props.clear} />
+                            </IconButton>
+
+                        </ListItemIcon>
+                        <ListItemText primary={"Clear"} />
                     </ListItem>
 
 

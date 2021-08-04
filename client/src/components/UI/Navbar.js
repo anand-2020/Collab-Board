@@ -15,6 +15,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import AuthContext from "../../context/auth-context";
 import SocketContext from "../../context/socket-context";
+import PeopleIcon from '@material-ui/icons/People'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,7 +84,14 @@ const Navbar = (props) => {
             >
               <AddIcon />
             </Fab>
-          ) : null}
+          ) : (<Fab
+            color="secondary"
+            aria-label="add"
+            className={classes.fabButton}
+            onClick={props.openCollabModal}
+          >
+            <PeopleIcon />
+          </Fab>)}
 
           <div className={classes.grow} />
           <div>
