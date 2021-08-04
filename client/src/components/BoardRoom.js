@@ -9,6 +9,7 @@ import Menu from "@material-ui/core/Menu";
 import { CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CollabModal from './UI/CollabModal'
+import { Slider } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     loader: {
@@ -20,6 +21,12 @@ const useStyles = makeStyles((theme) => ({
         transform: "-moz - translate(-50 %, -50 %)",
         transform: "-ms - translate(-50 %, -50 %)",
     },
+    slider: {
+        width: "50%"
+    },
+    lineWidthMenu: {
+        width: "200px"
+    }
 }));
 
 const BoardRoom = (props) => {
@@ -27,7 +34,10 @@ const BoardRoom = (props) => {
     const [currBoard, setCurrBoard] = useState(null);
     const [color, setColor] = useState("black");
     const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
+    const colorMenuOpen = Boolean(anchorEl);
+    const [anchorEl2, setAnchorEl2] = useState(null);
+    const widthMenuOpen = Boolean(anchorEl2);
+    const [lineWidth, setLineWidth] = useState(4)
     const [loading, setLoading] = useState(true);
     const [collabModalOpen, setCollabModalOpen] = useState(false)
     const [collaborators, setCollaborators] = useState(["abc@email.com", "abc@email.com", "abc@email.com", "abc@email.com"])
@@ -42,7 +52,12 @@ const BoardRoom = (props) => {
 
     const handleClose = () => {
         setAnchorEl(null);
+        setAnchorEl2(null)
     };
+
+    const toggleLineWidthMenu = (event) => {
+        setAnchorEl2(event.currentTarget)
+    }
 
     const changeColor = (selectedColor) => {
         setColor(selectedColor);
@@ -50,6 +65,10 @@ const BoardRoom = (props) => {
 
     const updateCollaborators = (updated) => {
         setCollaborators(updated)
+    }
+
+    const changeLineWidth = (e, value) => {
+        setLineWidth(value)
     }
 
     useEffect(() => {
@@ -67,18 +86,36 @@ const BoardRoom = (props) => {
     return (
         <div>
             <Navbar create={false} openCollabModal={toggleCollabModal} />
-            <SideBar selectColor={handleMenu} />
+            <SideBar selectColor={handleMenu} changeLineWidth={toggleLineWidthMenu} />
             <CollabModal
                 collaborators={collaborators}
                 updateCollaborators={updateCollaborators}
                 open={collabModalOpen}
                 closeCollabModal={toggleCollabModal}
             ></CollabModal>
-            <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+            <Menu anchorEl={anchorEl2} open={widthMenuOpen} onClose={handleClose}>
+                {/* <div className={classes.slider}> */}
+                <MenuItem className={classes.lineWidthMenu}>
+                    <Slider
+                        defaultValue={4}
+                        // getAriaValueText={valuetext}
+                        onChange={changeLineWidth}
+                        aria-labelledby="discrete-slider"
+                        valueLabelDisplay="auto"
+                        step={2}
+                        marks
+                        min={1}
+                        max={50}
+                        color="secondary"
+                    />
+                </MenuItem>
+                {/* </div> */}
+            </Menu>
+            <Menu anchorEl={anchorEl} open={colorMenuOpen} onClose={handleClose}>
                 <HexColorPicker onChange={changeColor} color={color}></HexColorPicker>
             </Menu>
             {!loading ? (
-                <Board board={currBoard} color={color} />
+                <Board board={currBoard} color={color} lineWidth={lineWidth} />
             ) : (
                 <CircularProgress className={classes.loader}></CircularProgress>
             )}

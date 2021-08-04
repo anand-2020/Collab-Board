@@ -77,7 +77,7 @@ const SideBar = (props) => {
 
                     <ListItem key={"pencil"}>
                         <ListItemIcon>
-                            <IconButton>
+                            <IconButton onClick={props.changeLineWidth}>
                                 <Pencil color="secondary" />
                             </IconButton>
 

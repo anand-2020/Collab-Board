@@ -29,12 +29,16 @@ const Board = (props) => {
     const context = canvas.getContext("2d");
     //context.scale(2, 2);
     //context.lineCap = "round";
-    context.lineWidth = 4;
+    context.lineWidth = props.lineWidth;
     contextRef.current = context;
 
     isDrawing = false;
     currPath = []
   };
+
+  useEffect(() => {
+    contextRef.current.lineWidth = props.lineWidth;
+  }, [props.lineWidth]);
 
   useEffect(() => {
     socket.emit("join-room", props.board._id)
