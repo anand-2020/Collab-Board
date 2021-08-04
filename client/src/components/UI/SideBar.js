@@ -10,11 +10,10 @@ import IconButton from '@material-ui/core/IconButton';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import { Toolbar } from '@material-ui/core';
 import Pencil from '@material-ui/icons/Edit'
 import ColorFill from '@material-ui/icons/FormatColorFill'
+import Undo from '@material-ui/icons/Undo'
 
 const drawerWidth = 240;
 
@@ -75,7 +74,7 @@ const SideBar = (props) => {
                 <Divider />
                 <List>
 
-                    <ListItem button key={"pencil"}>
+                    <ListItem key={"pencil"}>
                         <ListItemIcon>
                             <IconButton>
                                 <Pencil color="secondary" />
@@ -84,7 +83,7 @@ const SideBar = (props) => {
                         </ListItemIcon>
                         <ListItemText primary={"Pencil"} />
                     </ListItem>
-                    <ListItem button key={"pencil"}>
+                    <ListItem key={"color"}>
                         <ListItemIcon>
                             <IconButton onClick={props.selectColor}>
                                 <ColorFill color="secondary" />
@@ -92,6 +91,15 @@ const SideBar = (props) => {
 
                         </ListItemIcon>
                         <ListItemText primary={"Color"} />
+                    </ListItem>
+                    <ListItem key={"undo"}>
+                        <ListItemIcon>
+                            <IconButton>
+                                <Undo color="secondary" />
+                            </IconButton>
+
+                        </ListItemIcon>
+                        <ListItemText primary={"Undo"} />
                     </ListItem>
 
 

@@ -1,33 +1,18 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { io } from "socket.io-client";
 import SocketContext from "../../context/socket-context";
-import SideBar from '../UI/SideBar'
-import { HexColorPicker } from 'react-colorful'
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
+
 
 const Board = (props) => {
   const canvasRef = useRef(null);
   const contextRef = useRef({});
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+
   // var socket;
   // const socketRef = useRef()
   const { socket } = useContext(SocketContext);
-  var isDrawing, currPath;
-  const [color, setColor] = useState("black")
+  var isDrawing, currPath = [];
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
-  const changeColor = (selectedColor) => {
-    setColor(selectedColor)
-  }
   const prepareCanvas = () => {
     const canvas = canvasRef.current;
     // canvas.width = 500;
@@ -46,42 +31,37 @@ const Board = (props) => {
     contextRef.current = context;
 
     isDrawing = false;
-    setColor("black")
-    currPath = [];
+    currPath = []
   };
 
   useEffect(() => {
-    // console.log("Attempting socket connection");
-    // const socket = io("http://localhost:5000/", {
-    //   query: { token: props.board.jwt },
-    // });
-    // socketRef.current = socket;
-    socket.emit("join-room", props.board._id)
+    // socket.emit("join-room", props.board._id)
 
     prepareCanvas();
-  }, [props.board]);
+  }, []);
 
-  useEffect(() => {
-    if (!socket) return;
-    socket.on("update-canvas", (data) => {
-      const newPath = data.newPath;
-      contextRef.current.beginPath();
-      contextRef.current.moveTo(newPath[0].x, newPath[0].y);
+  // useEffect(() => {
+  //   if (!socket) return;
+  //   socket.on("update-canvas", (data) => {
+  //     const newPath = data.newPath;
+  //     contextRef.current.beginPath();
+  //     contextRef.current.moveTo(newPath[0].x, newPath[0].y);
 
-      for (var i = 1; i < newPath.length; i++) {
-        contextRef.current.lineTo(newPath[i].x, newPath[i].y);
-      }
-      contextRef.current.stroke();
-      contextRef.current.strokeStyle = color;
-    });
-  }, [props.board]);
+  //     for (var i = 1; i < newPath.length; i++) {
+  //       contextRef.current.lineTo(newPath[i].x, newPath[i].y);
+  //     }
+  //     contextRef.current.stroke();
+  //     contextRef.current.strokeStyle = props.color;
+  //   });
+  // }, []);
 
-  useEffect(() => {
-    return () => {
-      socket.emit("leave-room", props.board._id)
 
-    }
-  }, [props.board])
+  // useEffect(() => {
+  //   return () => {
+  //     socket.emit("leave-room", props.board._id)
+
+  //   }
+  // }, [])
 
 
   const startDrawing = ({ nativeEvent }) => {
@@ -95,7 +75,7 @@ const Board = (props) => {
 
   const finishDrawing = () => {
     isDrawing = false;
-    socket.emit("update-canvas", { newPath: currPath });
+    // socket.emit("update-canvas", { newPath: currPath });
     currPath = [];
   };
 
@@ -106,24 +86,13 @@ const Board = (props) => {
     const { offsetX, offsetY } = nativeEvent;
     contextRef.current.lineTo(offsetX, offsetY);
     contextRef.current.stroke();
-    contextRef.current.strokeStyle = color;
+    contextRef.current.strokeStyle = props.color;
     currPath.push({ x: offsetX, y: offsetY });
   };
 
   return (
     <div className="style">
-      <SideBar selectColor={handleMenu} />
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-      >
 
-        <HexColorPicker
-          onChange={changeColor}
-          color={color}
-        ></HexColorPicker>
-      </Menu>
       <canvas
         id="canvas"
         onMouseDown={startDrawing}
