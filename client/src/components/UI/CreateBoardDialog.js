@@ -14,6 +14,7 @@ import { CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import socketio from "socket.io-client";
 import AuthContext from "./../../context/auth-context";
+import SocketContext from "./../../context/socket-context";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -37,6 +38,7 @@ export default function CreateBoardDialog(props) {
   const [boardName, setBoardName] = useState(null);
 
   const { updateAuthData } = useContext(AuthContext);
+  const { socket } = useContext(SocketContext);
 
   const history = useHistory();
 
@@ -51,14 +53,12 @@ export default function CreateBoardDialog(props) {
         setLoading(false);
         const boardId = res.data.data.board._id;
 
-        // socket is already connected for public boards
-        // const connection = socketio.connect(
-        //   "http://localhost:5000/"
-        //   // , {
-        //   //   query: { token: null },
-        //   // }
-        // );
-        // updateAuthData(false, null, connection);
+        if (!socket) {
+          // make socket connection for private board if no connection exists
+          const connection = socketio.connect("http://localhost:5000/");
+          updateAuthData(false, null, connection);
+        }
+
         history.push({
           pathname: `/board/${boardId}`,
           state: {
