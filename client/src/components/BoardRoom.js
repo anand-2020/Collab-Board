@@ -47,6 +47,18 @@ const BoardRoom = (props) => {
     "abc@email.com",
     "abc@email.com",
   ]);
+  const [inAudio, setInAudio] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+
+
+  const toggleAudio = () => {
+    setInAudio(prev => !prev)
+  }
+
+  const toggleMuted = () => {
+    setIsMuted(prev => !prev)
+  }
+
 
   const toggleCollabModal = () => {
     setCollabModalOpen((prev) => !prev);
@@ -91,10 +103,19 @@ const BoardRoom = (props) => {
       });
   }, []);
 
+
+
   return (
     <div>
       <Navbar create={false} openCollabModal={toggleCollabModal} />
-      <SideBar selectColor={handleMenu} changeLineWidth={toggleLineWidthMenu} />
+      <SideBar
+        selectColor={handleMenu}
+        changeLineWidth={toggleLineWidthMenu}
+        inAudio={inAudio}
+        isMuted={isMuted}
+        toggleAudio={toggleAudio}
+        toggleMuted={toggleMuted}
+      />
       <CollabModal
         collaborators={collaborators}
         updateCollaborators={updateCollaborators}
@@ -123,7 +144,7 @@ const BoardRoom = (props) => {
         <HexColorPicker onChange={changeColor} color={color}></HexColorPicker>
       </Menu>
       {!loading ? (
-        <Board board={currBoard} color={color} lineWidth={lineWidth} />
+        <Board board={currBoard} color={color} lineWidth={lineWidth} inAudio={inAudio} isMuted={isMuted} />
       ) : (
         <CircularProgress className={classes.loader}></CircularProgress>
       )}

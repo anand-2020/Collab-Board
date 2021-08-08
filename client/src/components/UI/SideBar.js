@@ -15,6 +15,10 @@ import Pencil from '@material-ui/icons/Edit'
 import ColorFill from '@material-ui/icons/FormatColorFill'
 import Undo from '@material-ui/icons/Undo'
 import Delete from '@material-ui/icons/Delete'
+import Mic from '@material-ui/icons/Mic'
+import MicOff from '@material-ui/icons/MicOff'
+import Call from '@material-ui/icons/Call'
+import CallEnd from '@material-ui/icons/CallEnd'
 
 const drawerWidth = 240;
 
@@ -110,6 +114,29 @@ const SideBar = (props) => {
 
                         </ListItemIcon>
                         <ListItemText primary={"Clear"} />
+                    </ListItem>
+                    <ListItem key={"join-audio"}>
+                        <ListItemIcon>
+                            <IconButton>
+                                {
+                                    props.inAudio ? (<CallEnd color="secondary" onClick={props.toggleAudio} />) : (<Call color="secondary" onClick={props.toggleAudio} />)
+                                }
+
+                            </IconButton>
+
+                        </ListItemIcon>
+                        <ListItemText primary={"Join Audio"} />
+                    </ListItem>
+                    <ListItem key={"mute"}>
+                        <ListItemIcon>
+                            <IconButton disabled={!props.inAudio}>
+                                {
+                                    props.isMuted ? (<MicOff color="secondary" onClick={props.toggleMuted} />) : (<Mic color="secondary" onClick={props.toggleMuted} />)
+                                }
+                            </IconButton>
+
+                        </ListItemIcon>
+                        <ListItemText primary={"Mute"} />
                     </ListItem>
 
 
