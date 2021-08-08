@@ -1,145 +1,66 @@
 import { useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
-import styled from "styled-components";
 import { LoginForm } from "./LoginForm";
 import { motion } from "framer-motion";
 import { AccountContext } from "./accountContext";
 import { SignupForm } from "./SignupForm";
 import AuthContext from "../../context/auth-context";
 import appMotoImage from "../../assets/appMoto.PNG";
+import AppBar from "@material-ui/core/AppBar";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
+import Button from "@material-ui/core/Button";
+import Tooltip from "@material-ui/core/Tooltip";
+import CreateBoardDialog from "../UI/CreateBoardDialog";
+import {
+  AuthContainer,
+  OuterBoxContainer,
+  TopContainer,
+  BackDrop,
+  HeaderContainer,
+  HeaderText,
+  SmallText,
+  InnerContainer,
+  backdropVariants,
+  expandingTransition,
+  ImageConatiner,
+  ImageText,
+} from "./../../helper/styledElements";
 
-const AuthContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-
-  @media (max-width: 850px) {
-    flex-direction: column;
-  }
-`;
-
-const BoxContainer = styled.div`
-  width: 300px;
-  min-height: 620px;
-  display: flex;
-  flex-direction: column;
-  border-radius: 19px;
-  background-color: #fff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.07),
-    0 4px 8px rgba(0, 0, 0, 0.07), 0 8px 16px rgba(0, 0, 0, 0.07),
-    0 16px 32px rgba(0, 0, 0, 0.07), 0 32px 64px rgba(0, 0, 0, 0.07);
-  position: relative;
-  overflow: hidden;
-`;
-
-const TopContainer = styled.div`
-  width: 100%;
-  height: 250px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 0 1.8em;
-  padding-bottom: 5em;
-`;
-
-const BackDrop = styled(motion.div)`
-  width: 160%;
-  height: 550px;
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  border-radius: 50%;
-  transform: rotate(60deg);
-  top: -290px;
-  left: -70px;
-  background: rgb(12, 175, 169);
-`;
-
-const HeaderContainer = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-`;
-
-const HeaderText = styled.h2`
-  font-size: 30px;
-  font-weight: 600;
-  line-height: 1.24;
-  color: #fff;
-  z-index: 10;
-  margin: 0;
-`;
-
-const SmallText = styled.h5`
-  color: #fff;
-  font-weight: 500;
-  font-size: 14px;
-  z-index: 10;
-  margin: 0;
-  margin-top: 7px;
-`;
-
-const InnerContainer = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 0 1.8em;
-`;
-
-const backdropVariants = {
-  expanded: {
-    width: "233%",
-    height: "1050px",
-    borderRadius: "20%",
-    transform: "rotate(60deg)",
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    backgroundColor: "#FFFFFF",
+    display: "none",
+    ["@media (max-width:850px)"]: { display: "block" },
   },
-  collapsed: {
-    width: "160%",
-    height: "550px",
-    borderRadius: "50%",
-    transform: "rotate(60deg)",
+  title: {
+    flexGrow: 1,
+    color: "#008080",
+    fontSize: "28px",
+    fontWeight: "800",
+    fontFamily: "Georgia",
   },
-};
-
-const expandingTransition = {
-  type: "spring",
-  duration: 2.3,
-  stiffness: 30,
-};
-
-const ImageConatiner = styled.div`
-  align-items: center;
-  justify-content: center;
-  @media (max-width: 850px) {
-    display: none;
-  }
-`;
-
-const ImageText = styled.h1`
-  font-size: 55px;
-  padding-top: 5px;
-  padding-left: 10px;
-  font-weight: 800;
-  color: teal;
-`;
-
-const AppHeaderText = styled.h1`
-  font-size: 35px;
-  font-weight: 700;
-  color: black;
-  z-index: 10;
-  margin: 0;
-  display: none;
-
-  @media (max-width: 850px) {
-    display: block;
-  }
-`;
+  fabButton: {
+    position: "absolute",
+    zIndex: 1,
+    top: 20,
+    left: 200,
+    right: 0,
+    margin: "0 auto",
+  },
+  button: {
+    fontSize: "20px",
+    fontWeight: "600",
+    fontFamily: "Verdana",
+    margin: "0 0 0 200px",
+  },
+}));
 
 const Auth = (props) => {
+  const classes = useStyles();
   const { authenticated } = useContext(AuthContext);
 
   const [isExpanded, setExpanded] = useState(false);
@@ -168,15 +89,55 @@ const Auth = (props) => {
 
   const contextValue = { switchToSignup, switchToSignin };
 
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
+
   return (
     <AuthContainer>
       <AccountContext.Provider value={contextValue}>
+        <CreateBoardDialog open={openDialog} handleClose={handleClose} />
         <ImageConatiner>
           <ImageText>Collab-Board</ImageText>
-          <img width="540px" height="330px" src={appMotoImage} />
+          <img
+            width="540px"
+            height="330px"
+            src={appMotoImage}
+            style={{ display: "block" }}
+          />
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.button}
+            startIcon={<AddIcon />}
+            onClick={handleClickOpen}
+          >
+            Create New Board
+          </Button>
         </ImageConatiner>
+        <AppBar position="fixed" className={classes.appBar}>
+          <Toolbar>
+            <Typography className={classes.title}>Collab-Board </Typography>
+            <Tooltip title="Create New Board">
+              <Fab
+                color="secondary"
+                aria-label="add"
+                className={classes.fabButton}
+                onClick={handleClickOpen}
+              >
+                <AddIcon />
+              </Fab>
+            </Tooltip>
+          </Toolbar>
+        </AppBar>
         {!authenticated ? (
-          <BoxContainer>
+          <OuterBoxContainer>
             <TopContainer>
               <BackDrop
                 initial={false}
@@ -186,7 +147,6 @@ const Auth = (props) => {
               />
               {active === "signin" && (
                 <HeaderContainer>
-                  {/* <AppHeaderText>Collab-Board</AppHeaderText> */}
                   <HeaderText>Welcome</HeaderText>
                   <HeaderText>Back</HeaderText>
                   <SmallText>Please sign-in to continue!</SmallText>
@@ -194,7 +154,6 @@ const Auth = (props) => {
               )}
               {active === "signup" && (
                 <HeaderContainer>
-                  {/* <AppHeaderText>Collab-Board</AppHeaderText> */}
                   <HeaderText>Create</HeaderText>
                   <HeaderText>Account</HeaderText>
                   <SmallText>Please sign-up to continue!</SmallText>
@@ -205,7 +164,7 @@ const Auth = (props) => {
               {active === "signin" && <LoginForm />}
               {active === "signup" && <SignupForm />}
             </InnerContainer>
-          </BoxContainer>
+          </OuterBoxContainer>
         ) : (
           <Redirect to="/user/profile" />
         )}

@@ -3,23 +3,33 @@ const jwt = require("jsonwebtoken");
 const Board = require("./models/boardModel");
 
 const roomAuth = async (userID, boardID) => {
-  try {
-    const board = await Board.findById(boardID).select("owner collaborators");
+  if (userID) {
+    try {
+      const board = await Board.findById(boardID).select("owner collaborators");
 
-    let found = false;
-    if (board.owner === userID) found = true;
-    else {
-      for (var i = 0; i < board.collaborators.length; i++) {
-        if (board.collaborators[i] === userID) {
-          found = true;
-          break;
+      let found = false;
+      if (board.owner === userID) found = true;
+      else {
+        for (var i = 0; i < board.collaborators.length; i++) {
+          if (board.collaborators[i] === userID) {
+            found = true;
+            break;
+          }
         }
       }
+      if (found) return true;
+      else return false;
+    } catch (err) {
+      return false;
     }
-    if (found) return true;
-    else return false;
-  } catch (err) {
-    return false;
+  } else {
+    try {
+      const board = await Board.findById(boardID).select("isPublic");
+      if (board.isPublic) return true;
+      else return false;
+    } catch (err) {
+      return false;
+    }
   }
 };
 
@@ -33,15 +43,20 @@ module.exports.setupSocket = (server) => {
   });
 
   io.use((socket, next) => {
-    try {
-      socket.decoded = jwt.verify(
-        socket.handshake.query.token,
-        process.env.JWT_SECRET
-      );
+    if (socket.handshake.query.token) {
+      try {
+        socket.decoded = jwt.verify(
+          socket.handshake.query.token,
+          process.env.JWT_SECRET
+        );
+        next();
+      } catch (err) {
+        console.log("Could not authorize for this board");
+        next(new Error("Could not authorize for this board"));
+      }
+    } else {
+      socket.decoded = { id: null };
       next();
-    } catch (err) {
-      console.log("Could not authorize for this board");
-      next(new Error("Could not authorize for this board"));
     }
   }).on("connection", async (socket) => {
     const userID = socket.decoded.id;
@@ -54,12 +69,12 @@ module.exports.setupSocket = (server) => {
 
     socket.on("join-room", async (boardID) => {
       try {
-        console.log("joining room...");
         const canJoin = await roomAuth(userID, boardID);
 
         if (canJoin) {
           roomID = boardID;
           socket.join(roomID);
+          console.log("Room joined");
           io.emit("room-joined");
         } else {
           console.log("unauthorized");
@@ -78,7 +93,7 @@ module.exports.setupSocket = (server) => {
         if (canLeave) {
           socket.leave(roomID);
           roomID = null;
-          console.log("Leaving room");
+          console.log("Room left");
         } else {
           console.log("Could not leave");
         }
@@ -91,4 +106,4 @@ module.exports.setupSocket = (server) => {
       socket.broadcast.to(roomID).emit("update-canvas", data);
     });
   });
-}
+};

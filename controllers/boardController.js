@@ -42,6 +42,8 @@ exports.createBoard = catchAsync(async (req, res, next) => {
   const createdAt = Date.now();
   const newBoard = new Board({
     owner: req.body.owner,
+    isPublic: req.body.isPublic,
+    title: req.body.title,
     createdAt,
   });
 

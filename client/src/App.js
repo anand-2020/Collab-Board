@@ -13,6 +13,8 @@ const App = () => {
 
   const checkAuthentication = () => {
     if (!localStorage.getItem("jwt")) {
+      const connection = socketio.connect("http://localhost:5000/");
+      setSocket(connection);
       setLoading(false);
       return;
     }

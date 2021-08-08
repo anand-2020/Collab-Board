@@ -5,7 +5,6 @@ const Schema = mongoose.Schema;
 const boardSchema = new Schema({
   owner: {
     type: String,
-    required: [true, "Owner's username is required"],
   },
 
   createdAt: {
@@ -20,6 +19,16 @@ const boardSchema = new Schema({
 
   content: {
     type: String,
+  },
+
+  isPublic: {
+    type: Boolean,
+    default: false,
+  },
+
+  title: {
+    type: String,
+    required: [true, "Title of board is required"],
   },
 });
 

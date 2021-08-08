@@ -54,7 +54,7 @@ export default function BoardCard(props) {
           <div className={classes.controls}>
             <Link
               to={{
-                pathname: "/user/board",
+                pathname: `/board/${props.boardId}`,
                 state: {
                   boardId: props.boardId,
                 },
