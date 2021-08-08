@@ -16,6 +16,7 @@ import Menu from "@material-ui/core/Menu";
 import AuthContext from "../../context/auth-context";
 import SocketContext from "../../context/socket-context";
 import PeopleIcon from '@material-ui/icons/People'
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,6 +48,7 @@ const Navbar = (props) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const history = useHistory()
 
   const { updateAuthData } = useContext(AuthContext);
   const { socket } = useContext(SocketContext);
@@ -63,6 +65,11 @@ const Navbar = (props) => {
     localStorage.removeItem("jwt");
     socket.disconnect();
     updateAuthData(false, null, null);
+    history.push('/auth')
+  };
+
+  const goToProfile = () => {
+    history.push('/user/profile')
   };
 
   return (
@@ -119,7 +126,7 @@ const Navbar = (props) => {
               open={open}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
+              <MenuItem onClick={goToProfile}>Profile</MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </div>
