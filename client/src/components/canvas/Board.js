@@ -33,6 +33,7 @@ const Board = (props) => {
     const context = canvas.getContext("2d");
     //context.scale(2, 2);
     //context.lineCap = "round";
+    context.lineCap = "round"
     context.lineWidth = props.lineWidth;
     contextRef.current = context;
 
