@@ -68,10 +68,10 @@ module.exports.setupSocket = (server) => {
     }
   }).on("connection", async (socket) => {
     let currUser;
-    if (socket.decoded)
+    if (socket.decoded.id)
       currUser = await User.findById(socket.decoded.id).select("handle");
-
-    const userHandle = socket.decoded ? currUser.handle : null;
+    // console.log(currUser, socket.decoded.id)
+    const userHandle = socket.decoded.id ? currUser.handle : null;
     console.log("socket connected");
     io.emit("connected");
 
