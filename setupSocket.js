@@ -105,5 +105,13 @@ module.exports.setupSocket = (server) => {
     socket.on("update-canvas", async (data) => {
       socket.broadcast.to(roomID).emit("update-canvas", data);
     });
+
+    socket.on('joinAudioRoom', (roomId, userId) => {
+      socket.broadcast.to(roomId).emit('userJoinedAudio', userId);
+
+      socket.on('leaveAudioRoom', () => {
+        socket.broadcast.to(roomId).emit('userLeftAudio', userId);
+      });
+    });
   });
 };
