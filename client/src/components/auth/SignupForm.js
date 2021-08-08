@@ -12,10 +12,12 @@ import {
 import { Marginer } from "./../../helper/marginer";
 import { AccountContext } from "./accountContext";
 import AuthContext from "../../context/auth-context";
+import SocketContext from "../../context/socket-context";
 
 export function SignupForm(props) {
   const { switchToSignin } = useContext(AccountContext);
   const { updateAuthData } = useContext(AuthContext);
+  const { socket } = useContext(SocketContext);
   const [handle, setHandle] = useState(null);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
@@ -31,6 +33,8 @@ export function SignupForm(props) {
       .then((res) => {
         // change it to httpOnly cookie
         localStorage.setItem("jwt", res.data.jwt);
+        // disconnect previous un-authenticated socket
+        if (socket) socket.disconnect();
         const connection = socketio.connect("http://localhost:5000/", {
           query: { token: localStorage.getItem("jwt") },
         });

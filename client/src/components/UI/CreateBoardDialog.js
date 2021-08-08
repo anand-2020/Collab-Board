@@ -50,13 +50,15 @@ export default function CreateBoardDialog(props) {
       .then((res) => {
         setLoading(false);
         const boardId = res.data.data.board._id;
-        const connection = socketio.connect(
-          "http://localhost:5000/"
-          // , {
-          //   query: { token: null },
-          // }
-        );
-        updateAuthData(false, null, connection);
+
+        // socket is already connected for public boards
+        // const connection = socketio.connect(
+        //   "http://localhost:5000/"
+        //   // , {
+        //   //   query: { token: null },
+        //   // }
+        // );
+        // updateAuthData(false, null, connection);
         history.push({
           pathname: `/board/${boardId}`,
           state: {
