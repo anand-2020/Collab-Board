@@ -1,17 +1,25 @@
 const socketio = require("socket.io");
 const jwt = require("jsonwebtoken");
 const Board = require("./models/boardModel");
+const User = require("./models/userModel");
 
-const roomAuth = async (userID, boardID) => {
-  if (userID) {
+const roomAuth = async (userHandle, boardID) => {
+  if (userHandle) {
     try {
-      const board = await Board.findById(boardID).select("owner collaborators");
+      const board = await Board.findById(boardID)
+        .select("owner isPublic")
+        .populate({
+          path: "collaborators",
+          select: "handle",
+        });
+
+      if (board.isPublic) return true;
 
       let found = false;
-      if (board.owner === userID) found = true;
+      if (board.owner === userHandle) found = true;
       else {
         for (var i = 0; i < board.collaborators.length; i++) {
-          if (board.collaborators[i] === userID) {
+          if (board.collaborators[i].handle === userHandle) {
             found = true;
             break;
           }
@@ -59,7 +67,11 @@ module.exports.setupSocket = (server) => {
       next();
     }
   }).on("connection", async (socket) => {
-    const userID = socket.decoded.id;
+    let currUser;
+    if (socket.decoded)
+      currUser = await User.findById(socket.decoded.id).select("handle");
+
+    const userHandle = socket.decoded ? currUser.handle : null;
     console.log("socket connected");
     io.emit("connected");
 
@@ -69,7 +81,7 @@ module.exports.setupSocket = (server) => {
 
     socket.on("join-room", async (boardID) => {
       try {
-        const canJoin = await roomAuth(userID, boardID);
+        const canJoin = await roomAuth(userHandle, boardID);
 
         if (canJoin) {
           roomID = boardID;
@@ -88,7 +100,7 @@ module.exports.setupSocket = (server) => {
 
     socket.on("leave-room", async (boardID) => {
       try {
-        const canLeave = await roomAuth(userID, boardID);
+        const canLeave = await roomAuth(userHandle, boardID);
 
         if (canLeave) {
           socket.leave(roomID);

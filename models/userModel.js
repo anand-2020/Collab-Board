@@ -4,27 +4,47 @@ const bcrypt = require("bcryptjs");
 
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
-  handle: {
-    type: String,
-    unique: true,
-    required: [true, "Username is required"],
-  },
+const userSchema = new Schema(
+  {
+    handle: {
+      type: String,
+      unique: true,
+      required: [true, "Username is required"],
+    },
 
-  email: {
-    type: String,
-    unique: true,
-    required: [true, "Email is required"],
-    validate: [validator.isEmail, "Provide a vaild email"],
-  },
+    email: {
+      type: String,
+      unique: true,
+      required: [true, "Email is required"],
+      validate: [validator.isEmail, "Provide a vaild email"],
+    },
 
-  password: {
-    type: String,
-    required: true,
-    minlength: 8,
-    select: false,
+    password: {
+      type: String,
+      required: true,
+      minlength: 8,
+      select: false,
+    },
+
+    ownedBoards: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Board",
+      },
+    ],
+
+    collabBoards: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Board",
+      },
+    ],
   },
-});
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
