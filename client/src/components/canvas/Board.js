@@ -28,7 +28,7 @@ const Board = (props) => {
     canvas.height = window.innerHeight;
     // canvas.style.width = `${window.innerWidth}px`;
     // canvas.style.height = `${window.innerHeight}px`;
-    canvas.style.backgroundColor = "red";
+    canvas.style.backgroundColor = "white";
 
     const context = canvas.getContext("2d");
     //context.scale(2, 2);

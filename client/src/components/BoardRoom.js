@@ -93,7 +93,11 @@ const BoardRoom = (props) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/board/${boardId}`)
+      .get(`http://localhost:5000/api/board/${boardId}`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        }
+      })
       .then((res) => {
         setCurrBoard(res.data.data.board);
         setLoading(false);
