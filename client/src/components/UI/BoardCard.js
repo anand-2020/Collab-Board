@@ -45,10 +45,10 @@ export default function BoardCard(props) {
         <div className={classes.details}>
           <CardContent className={classes.content}>
             <Typography component="h5" variant="h5">
-              Your Board One
+              {props.boardName}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary">
-              22/01/2021
+              {props.boardDate}
             </Typography>
           </CardContent>
           <div className={classes.controls}>
