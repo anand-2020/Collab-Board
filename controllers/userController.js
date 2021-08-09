@@ -17,3 +17,14 @@ exports.getUserBoards = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.getAllUserEmail = catchAsync(async (req, res, next) => {
+  const users = await User.find().select("email");
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      users,
+    },
+  });
+});

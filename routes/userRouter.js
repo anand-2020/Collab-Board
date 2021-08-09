@@ -18,4 +18,6 @@ router.get(
   userController.getUserBoards
 );
 
+router.get("/users", authController.protect, userController.getAllUserEmail);
+
 module.exports = router;
