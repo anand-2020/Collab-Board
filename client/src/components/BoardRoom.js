@@ -49,17 +49,15 @@ const BoardRoom = (props) => {
   ]);
   const [inAudio, setInAudio] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
-  const [users, setUsers] = useState([])
-
+  const [users, setUsers] = useState([]);
 
   const toggleAudio = () => {
-    setInAudio(prev => !prev)
-  }
+    setInAudio((prev) => !prev);
+  };
 
   const toggleMuted = () => {
-    setIsMuted(prev => !prev)
-  }
-
+    setIsMuted((prev) => !prev);
+  };
 
   const toggleCollabModal = () => {
     setCollabModalOpen((prev) => !prev);
@@ -97,38 +95,45 @@ const BoardRoom = (props) => {
       .get(`http://localhost:5000/api/board/${boardId}`, {
         headers: {
           authorization: `Bearer ${localStorage.getItem("jwt")}`,
-        }
+        },
       })
       .then((res) => {
         setCurrBoard(res.data.data.board);
-        const collaboratorsEmails = []
-        res.data.data.board.collaborators.forEach(collaborator => {
-          return collaboratorsEmails.push(collaborator.email)
-        })
-        setCollaborators(collaboratorsEmails)
-        console.log(res.data.data.board)
-        axios
-          .get(`http://localhost:5000/api/auth/users/`, {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem("jwt")}`,
-            }
-          }).then(res => {
-            setUsers(res.data.data.users)
-            setLoading(false);
-            // console.log(res.data.data.users)
-          })
-          .catch(err => console.log(err))
+        const collaboratorsEmails = [];
+        res.data.data.board.collaborators.forEach((collaborator) => {
+          return collaboratorsEmails.push(collaborator.email);
+        });
+        setCollaborators(collaboratorsEmails);
+        // console.log(res.data.data.board);
+        if (res.data.data.board.isPublic === false) {
+          axios
+            .get(`http://localhost:5000/api/auth/users/`, {
+              headers: {
+                authorization: `Bearer ${localStorage.getItem("jwt")}`,
+              },
+            })
+            .then((res) => {
+              setUsers(res.data.data.users);
+              setLoading(false);
+              // console.log(res.data.data.users)
+            })
+            .catch((err) => console.log(err));
+        } else setLoading(false);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
-
-
   return (
     <div>
-      <Navbar create={false} openCollabModal={toggleCollabModal} inBoardRoom boardName={currBoard.title} />
+      <Navbar
+        create={false}
+        openCollabModal={toggleCollabModal}
+        inBoardRoom
+        boardName={currBoard.title}
+        boardIsPublic={currBoard.isPublic}
+      />
       <SideBar
         selectColor={handleMenu}
         changeLineWidth={toggleLineWidthMenu}
@@ -166,7 +171,13 @@ const BoardRoom = (props) => {
         <HexColorPicker onChange={changeColor} color={color}></HexColorPicker>
       </Menu>
       {!loading ? (
-        <Board board={currBoard} color={color} lineWidth={lineWidth} inAudio={inAudio} isMuted={isMuted} />
+        <Board
+          board={currBoard}
+          color={color}
+          lineWidth={lineWidth}
+          inAudio={inAudio}
+          isMuted={isMuted}
+        />
       ) : (
         <CircularProgress className={classes.loader}></CircularProgress>
       )}

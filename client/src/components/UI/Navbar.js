@@ -15,7 +15,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import AuthContext from "../../context/auth-context";
 import SocketContext from "../../context/socket-context";
-import PeopleIcon from '@material-ui/icons/People'
+import PeopleIcon from "@material-ui/icons/People";
 import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
@@ -48,7 +48,7 @@ const Navbar = (props) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const history = useHistory()
+  const history = useHistory();
 
   const { updateAuthData } = useContext(AuthContext);
   const { socket } = useContext(SocketContext);
@@ -65,11 +65,11 @@ const Navbar = (props) => {
     localStorage.removeItem("jwt");
     socket.disconnect();
     updateAuthData(false, null, null);
-    history.push('/auth')
+    history.push("/auth");
   };
 
   const goToProfile = () => {
-    history.push('/user/profile')
+    history.push("/user/profile");
   };
 
   return (
@@ -81,9 +81,10 @@ const Navbar = (props) => {
                     <MenuIcon />
                 </IconButton> */}
           <Typography variant="h6" className={clsx("title", classes.title)}>
-            {"Collab-Board" + (props.inBoardRoom ? (" / " + props.boardName) : "")}
+            {"Collab-Board" +
+              (props.inBoardRoom ? " / " + props.boardName : "")}
           </Typography>
-          {props.create ? (
+          {props.create === true ? (
             <Fab
               color="secondary"
               aria-label="add"
@@ -91,15 +92,17 @@ const Navbar = (props) => {
             >
               <AddIcon />
             </Fab>
-          ) : (<Fab
-            color="secondary"
-            aria-label="add"
-            className={classes.fabButton}
-            onClick={props.openCollabModal}
-          >
-            <PeopleIcon />
-          </Fab>)}
-
+          ) : null}
+          {props.create === false && props.boardIsPublic === false ? (
+            <Fab
+              color="secondary"
+              aria-label="add"
+              className={classes.fabButton}
+              onClick={props.openCollabModal}
+            >
+              <PeopleIcon />
+            </Fab>
+          ) : null}
           <div className={classes.grow} />
           <div>
             <IconButton
