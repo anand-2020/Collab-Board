@@ -49,6 +49,7 @@ const BoardRoom = (props) => {
   ]);
   const [inAudio, setInAudio] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
+  const [users, setUsers] = useState([])
 
 
   const toggleAudio = () => {
@@ -100,8 +101,23 @@ const BoardRoom = (props) => {
       })
       .then((res) => {
         setCurrBoard(res.data.data.board);
-        setLoading(false);
-        // console.log(res.data.data.board)
+        const collaboratorsEmails = []
+        res.data.data.board.collaborators.forEach(collaborator => {
+          return collaboratorsEmails.push(collaborator.email)
+        })
+        setCollaborators(collaboratorsEmails)
+        console.log(res.data.data.board)
+        axios
+          .get(`http://localhost:5000/api/auth/users/`, {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            }
+          }).then(res => {
+            setUsers(res.data.data.users)
+            setLoading(false);
+            // console.log(res.data.data.users)
+          })
+          .catch(err => console.log(err))
       })
       .catch((err) => {
         console.log(err);
@@ -122,6 +138,7 @@ const BoardRoom = (props) => {
         toggleMuted={toggleMuted}
       />
       <CollabModal
+        users={users}
         collaborators={collaborators}
         updateCollaborators={updateCollaborators}
         open={collabModalOpen}
