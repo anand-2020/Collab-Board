@@ -50,6 +50,11 @@ export default function BoardCard(props) {
             <Typography variant="subtitle1" color="textSecondary">
               {props.boardDate}
             </Typography>
+            {props.boardOwner ? (
+              <Typography variant="subtitle2" color="textSecondary">
+                Owner: {props.boardOwner}
+              </Typography>
+            ) : null}
           </CardContent>
           <div className={classes.controls}>
             <Link
@@ -61,7 +66,7 @@ export default function BoardCard(props) {
               }}
             >
               <IconButton aria-label="edit">
-                <BorderColor />
+                <BorderColor color="primary" />
               </IconButton>
             </Link>
             <IconButton aria-label="share">

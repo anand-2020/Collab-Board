@@ -37,7 +37,8 @@ export default function CreateBoardDialog(props) {
   const [loading, setLoading] = useState(false);
   const [boardName, setBoardName] = useState(null);
 
-  const { updateAuthData } = useContext(AuthContext);
+  const { authenticated, currentUser, updateAuthData } =
+    useContext(AuthContext);
   const { socket } = useContext(SocketContext);
 
   const history = useHistory();
@@ -45,16 +46,24 @@ export default function CreateBoardDialog(props) {
   const handleCreate = () => {
     setLoading(true);
     axios
-      .post(`http://localhost:5000/api/board/`, {
-        title: boardName,
-        isPublic: true,
-      })
+      .post(
+        `http://localhost:5000/api/board/`,
+        {
+          title: boardName,
+          isPublic: true,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        }
+      )
       .then((res) => {
         setLoading(false);
         const boardId = res.data.data.board._id;
 
         if (!socket) {
-          // make socket connection for private board if no connection exists
+          // make socket connection for public board if no connection exists
           const connection = socketio.connect("http://localhost:5000/");
           updateAuthData(false, null, connection);
         }
@@ -81,10 +90,17 @@ export default function CreateBoardDialog(props) {
     >
       <DialogTitle id="form-dialog-title">Create New Board</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          The board created will be public. Anyone having the url of the board
-          can access and edit it. Create account if you want a private board.
-        </DialogContentText>
+        {authenticated ? (
+          <DialogContentText>
+            Dear {currentUser.handle}, your board will be private. You can add
+            collaborators to the board after it is created.
+          </DialogContentText>
+        ) : (
+          <DialogContentText>
+            The board created will be public. Anyone having the url of the board
+            can access and edit it. Create account if you want a private board.
+          </DialogContentText>
+        )}
         <TextField
           autoFocus
           margin="dense"

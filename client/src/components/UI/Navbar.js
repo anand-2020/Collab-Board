@@ -17,6 +17,7 @@ import AuthContext from "../../context/auth-context";
 import SocketContext from "../../context/socket-context";
 import PeopleIcon from "@material-ui/icons/People";
 import { useHistory } from "react-router";
+import CreateBoardDialog from "./CreateBoardDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,6 +53,7 @@ const Navbar = (props) => {
 
   const { updateAuthData } = useContext(AuthContext);
   const { socket } = useContext(SocketContext);
+  const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -59,6 +61,14 @@ const Navbar = (props) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleCreateOpen = () => {
+    setOpenCreateDialog(true);
+  };
+
+  const handleCreateClose = () => {
+    setOpenCreateDialog(false);
   };
 
   const handleLogout = () => {
@@ -75,6 +85,10 @@ const Navbar = (props) => {
   return (
     <div className={classes.root}>
       <CssBaseline />
+      <CreateBoardDialog
+        open={openCreateDialog}
+        handleClose={handleCreateClose}
+      />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           {/* <IconButton edge="start" color="inherit" aria-label="open drawer">
@@ -89,6 +103,7 @@ const Navbar = (props) => {
               color="secondary"
               aria-label="add"
               className={classes.fabButton}
+              onClick={handleCreateOpen}
             >
               <AddIcon />
             </Fab>

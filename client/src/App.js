@@ -25,8 +25,8 @@ const App = () => {
         },
       })
       .then((res) => {
-        setAuthenticated(true);
         setCurrentUser(res.data.data.user);
+        setAuthenticated(true);
         setLoading(false);
 
         const connection = socketio.connect("http://localhost:5000/", {
@@ -45,9 +45,9 @@ const App = () => {
   }, []);
 
   const updateAuthData = (isAuthenticated, user, socketConnection) => {
-    setAuthenticated(isAuthenticated);
     setCurrentUser(user);
     setSocket(socketConnection);
+    setAuthenticated(isAuthenticated);
   };
 
   return (
