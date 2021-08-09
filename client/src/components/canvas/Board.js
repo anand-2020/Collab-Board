@@ -33,7 +33,7 @@ const Board = (props) => {
     const context = canvas.getContext("2d");
     //context.scale(2, 2);
     //context.lineCap = "round";
-    context.lineCap = "round"
+    context.lineCap = "round";
     context.lineWidth = props.lineWidth;
     contextRef.current = context;
 
@@ -60,10 +60,10 @@ const Board = (props) => {
 
       for (var i = 1; i < newPath.length; i++) {
         contextRef.current.lineTo(newPath[i].x, newPath[i].y);
+        contextRef.current.stroke();
+        contextRef.current.strokeStyle = data.color;
+        contextRef.current.lineWidth = data.width;
       }
-      contextRef.current.stroke();
-      contextRef.current.strokeStyle = data.color;
-      contextRef.current.lineWidth = data.width;
     });
   }, []);
 
