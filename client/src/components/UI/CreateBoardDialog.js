@@ -50,7 +50,7 @@ export default function CreateBoardDialog(props) {
         `http://localhost:5000/api/board/`,
         {
           title: boardName,
-          isPublic: true,
+          isPublic: authenticated ? false : true,
         },
         {
           headers: {
