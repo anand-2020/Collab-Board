@@ -159,7 +159,7 @@ exports.protectBoard = catchAsync(async (req, res, next) => {
     token = req.headers.authorization.split(" ")[1];
   }
 
-  if (!token) {
+  if (token === undefined || token === null || token === "null") {
     req.user = null;
     next();
   } else authController.protect(req, res, next);
