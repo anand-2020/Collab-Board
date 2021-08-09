@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 
 const BoardRoom = (props) => {
   const classes = useStyles();
-  const [currBoard, setCurrBoard] = useState(null);
+  const [currBoard, setCurrBoard] = useState({ title: "..." });
   const [color, setColor] = useState("black");
   const [anchorEl, setAnchorEl] = useState(null);
   const colorMenuOpen = Boolean(anchorEl);
@@ -101,6 +101,7 @@ const BoardRoom = (props) => {
       .then((res) => {
         setCurrBoard(res.data.data.board);
         setLoading(false);
+        // console.log(res.data.data.board)
       })
       .catch((err) => {
         console.log(err);
@@ -111,7 +112,7 @@ const BoardRoom = (props) => {
 
   return (
     <div>
-      <Navbar create={false} openCollabModal={toggleCollabModal} />
+      <Navbar create={false} openCollabModal={toggleCollabModal} inBoardRoom boardName={currBoard.title} />
       <SideBar
         selectColor={handleMenu}
         changeLineWidth={toggleLineWidthMenu}

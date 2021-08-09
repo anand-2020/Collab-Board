@@ -118,7 +118,7 @@ const Profile = () => {
             <>
               <BoardCardGrid>
                 {ownedBoards.map((board, index) => (
-                  <BoardCard key={index} boardId={board._id} />
+                  <BoardCard key={index} boardId={board._id} boardName={board.title} boardDate={board.createdAt.split('T')[0]} />
                 ))}
               </BoardCardGrid>
             </>

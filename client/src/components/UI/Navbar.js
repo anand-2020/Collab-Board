@@ -81,7 +81,7 @@ const Navbar = (props) => {
                     <MenuIcon />
                 </IconButton> */}
           <Typography variant="h6" className={clsx("title", classes.title)}>
-            CollaBoard{" "}
+            {"Collab-Board" + (props.inBoardRoom ? (" / " + props.boardName) : "")}
           </Typography>
           {props.create ? (
             <Fab
