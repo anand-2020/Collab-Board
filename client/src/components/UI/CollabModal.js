@@ -10,6 +10,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Chip from "@material-ui/core/Chip";
 import FaceIcon from "@material-ui/icons/Face";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import axios from "axios";
 
 var validEmails = new Map();
 var addedEmails = new Map();
@@ -31,6 +32,7 @@ const CollabModal = (props) => {
   useEffect(() => {
     props.users.forEach((user) => validEmails.set(user.email, user._id));
   }, [props.users]);
+
   useEffect(() => {
     props.collaborators.forEach((email) => addedEmails.set(email, true));
   }, []);
@@ -54,11 +56,33 @@ const CollabModal = (props) => {
       pattern.test(event.target.value) &&
       !addedEmails.has(event.target.value)
     ) {
-      addedEmails.set(event.target.value, true);
-      props.updateCollaborators([...props.collaborators, event.target.value]);
-
-      event.target.value = "";
-      setValue(null);
+      const collaboratorID = validEmails.get(event.target.value);
+      axios
+        .patch(
+          `http://localhost:5000/api/board/${props.boardID}`,
+          {
+            collaborators: [collaboratorID],
+          },
+          {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            },
+          }
+        )
+        .then((res) => {
+          addedEmails.set(event.target.value, true);
+          props.updateCollaborators([
+            ...props.collaborators,
+            event.target.value,
+          ]);
+          event.target.value = "";
+          setValue(null);
+        })
+        .catch((err) => {
+          event.target.value = "";
+          setValue(null);
+          window.alert("Could not add collaborator. Try again later!");
+        });
     }
   };
 

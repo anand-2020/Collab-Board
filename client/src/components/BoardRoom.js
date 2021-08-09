@@ -151,6 +151,7 @@ const BoardRoom = (props) => {
         updateCollaborators={updateCollaborators}
         open={collabModalOpen}
         closeCollabModal={toggleCollabModal}
+        boardID={currBoard._id}
         isBoardOwner={
           authenticated && currBoard.owner === currentUser.handle ? true : false
         }
