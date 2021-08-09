@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Board from "./canvas/Board";
@@ -11,6 +11,7 @@ import { CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CollabModal from "./UI/CollabModal";
 import { Slider } from "@material-ui/core";
+import AuthContext from "../context/auth-context";
 
 const useStyles = makeStyles((theme) => ({
   loader: {
@@ -50,6 +51,8 @@ const BoardRoom = (props) => {
   const [inAudio, setInAudio] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [users, setUsers] = useState([]);
+
+  const { authenticated, currentUser } = useContext(AuthContext);
 
   const toggleAudio = () => {
     setInAudio((prev) => !prev);
@@ -148,6 +151,9 @@ const BoardRoom = (props) => {
         updateCollaborators={updateCollaborators}
         open={collabModalOpen}
         closeCollabModal={toggleCollabModal}
+        isBoardOwner={
+          authenticated && currBoard.owner === currentUser.handle ? true : false
+        }
       ></CollabModal>
       <Menu anchorEl={anchorEl2} open={widthMenuOpen} onClose={handleClose}>
         {/* <div className={classes.slider}> */}
