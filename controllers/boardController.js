@@ -102,30 +102,58 @@ exports.updateBoard = catchAsync(async (req, res, next) => {
     );
   }
 
-  if (req.body.isPublic !== undefined) board.isPublic = req.body.isPublic;
+  if (req.user !== null) board.isPublic = req.body.isPublic;
   if (req.body.title) board.title = req.body.title;
   if (req.body.collaborators) {
     // TODO: check if any collaborator already exists
-    board.collaborators = board.collaborators.concat(req.body.collaborators);
+    if (req.body.addCollaborators === true) {
+      board.collaborators = board.collaborators.concat(req.body.collaborators);
+    } else {
+      // remove collaborators
+      var updatedCollaborators = [];
+      for (var i = 0; i < board.collaborators.length; i++) {
+        var flag = false;
+        for (var j = 0; j < req.body.collaborators.length; j++) {
+          if (board.collaborators[i] === req.body.collaborators[j]) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) updatedCollaborators.push(board.collaborators[i]);
+      }
+
+      board.collaborators = updatedCollaborators;
+    }
   }
 
   await board.save({ validateBeforeSave: false });
 
+  // updating in user model
   if (req.body.collaborators) {
-    const collaboratorPromises = req.body.collaborators.map(
-      async (id) =>
-        await User.findByIdAndUpdate(id, {
-          $push: { collabBoards: board._id },
-        })
-    );
-    await Promise.all(collaboratorPromises);
+    if (req.body.addCollaborators === true) {
+      const collaboratorPromises = req.body.collaborators.map(
+        async (id) =>
+          await User.findByIdAndUpdate(id, {
+            $push: { collabBoards: board._id },
+          })
+      );
+      await Promise.all(collaboratorPromises);
+    } else {
+      const collaboratorPromises = req.body.collaborators.map(
+        async (id) =>
+          await User.findByIdAndUpdate(id, {
+            $pull: { collabBoards: board._id },
+          })
+      );
+      await Promise.all(collaboratorPromises);
+    }
   }
 
   res.status(200).json({
     status: "success",
-    data: {
-      board,
-    },
+    // data: {
+    //   board:
+    // },
   });
 });
 

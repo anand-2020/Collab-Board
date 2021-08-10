@@ -42,14 +42,9 @@ const BoardRoom = (props) => {
   const [lineWidth, setLineWidth] = useState(4);
   const [loading, setLoading] = useState(true);
   const [collabModalOpen, setCollabModalOpen] = useState(false);
-  const [collaborators, setCollaborators] = useState([
-    "abc@email.com",
-    "abc@email.com",
-    "abc@email.com",
-    "abc@email.com",
-  ]);
+  const [collaborators, setCollaborators] = useState([]);
   const [inAudio, setInAudio] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [users, setUsers] = useState([]);
 
   const { authenticated, currentUser } = useContext(AuthContext);

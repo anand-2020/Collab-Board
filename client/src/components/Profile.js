@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     // backgroundColor: theme.palette.background.paper,
-    margin: "10vh auto",
+    margin: "8.8vh auto",
   },
   loader: {
     position: "fixed",
@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     backgroundColor: "#009192",
+    position: "fixed",
   },
 }));
 
@@ -63,7 +64,7 @@ const Profile = () => {
   const [collabBoards, setCollabBoards] = useState([]);
   const [ownedBoards, setOwnedBoards] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
   const classes = useStyles();
 
   const handleChange = (event, newValue) => {
@@ -92,10 +93,23 @@ const Profile = () => {
     <div>
       <Navbar create={true} />
       <div className={classes.root}>
-        <AppBar position="static" className={classes.appBar}>
-          <Tabs value={value} onChange={handleChange}>
-            <Tab label="Owned" {...a11yProps(0)} />
-            <Tab label="Collaborated" {...a11yProps(1)} />
+        <AppBar position="static">
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            centered
+            variant="fullWidth"
+          >
+            <Tab
+              label="Owned"
+              {...a11yProps(0)}
+              style={{ background: "teal", color: "white" }}
+            />
+            <Tab
+              label="Collaborated"
+              {...a11yProps(1)}
+              style={{ background: "teal", color: "white" }}
+            />
           </Tabs>
         </AppBar>
         <TabPanel value={value} index={0}>
