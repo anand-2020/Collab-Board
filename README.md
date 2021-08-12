@@ -7,4 +7,4 @@
 
 ![Dashboard](./screenshots/dashboard.jpg)
 
-![Board](./screenshots/dashboard.jpg)
+![Board](./screenshots/board.jpg)
